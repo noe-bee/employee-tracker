@@ -1,5 +1,13 @@
 const inquirer = require("inquirer");
-const { viewDepartments, addDepartment, viewRoles, addRole, viewEmployees} = require("./db/dataManip");
+const {
+  viewDepartments,
+  addDepartment,
+  viewRoles,
+  addRole,
+  viewEmployees,
+  addEmployee,
+  updateEmployee,
+} = require("./db/dataManip");
 
 //questions
 const questions = [
@@ -46,37 +54,87 @@ function init() {
           });
         break;
       case "Add a role":
-        const roleQuestios = [
-          {
-            type: "input",
-            name: "newRole",
-            message: "What new role would you like to add?",
-          },
-          {
-            type: "input",
-            name: "newRoleSalary",
-            message: "What is the salary for this new role?",
-          },
-          {
-            type: "list",
-            name: "newRoleDepartment",
-            message: "What is the department of this new role?",
-            choices: ["Production", "Marketing", "Human Resources"],
-          },
-        ];
-        inquirer.prompt(roleQuestios).then((answer) => {
-          console.log(answer);
-          // if (answer.newRoleDepartment === "Marketing") {
-
-          // }
-          addRole(answer.newRole, answer.newRoleSalary, answer.newRoleDepartment)
-        });
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "newRole",
+              message: "What new role would you like to add?",
+            },
+            {
+              type: "input",
+              name: "newRoleSalary",
+              message: "What is the salary for this new role?",
+            },
+            {
+              type: "list",
+              name: "newRoleDepartment",
+              message: "What is the department of this new role?",
+              choices: ["Production", "Marketing", "Human Resources"],
+            },
+          ])
+          .then((answer) => {
+            addRole(
+              answer.newRole,
+              answer.newRoleSalary,
+              answer.newRoleDepartment
+            );
+          });
         break;
       case "Add an employee":
-        // code block
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "newEmployeeFN",
+              message: "What is the new employee's first name?",
+            },
+            {
+              type: "input",
+              name: "newEmployeeLN",
+              message: "What is the new employee's last name?",
+            },
+            {
+              type: "list",
+              name: "newEmployeeRole",
+              message: "What is the new employee's role?",
+              choices: ["Marketing Coordinator", "Production Analyst ", "Human Resources Assistant"],
+            },
+            {
+              type: "list",
+              name: "newEmployeeManager",
+              message: "Who is the new employee's manager?",
+              choices: ["Nancy Grimace", "Paul Brenan", "Janice Lemons"],
+            },
+          ])
+          .then((answer) => {
+            addEmployee(
+              answer.newEmployeeFN,
+              answer.newEmployeeLN,
+              answer.newEmployeeRole,
+              answer.newEmployeeManager
+            );
+          });
         break;
       case "Update an employee role":
-        // code block
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "updatedEmployee",
+              message: "Which employee would you like to update?",
+              choices: ["Nancy Grimace", "Alan Baker", "Paul Brenan", "Janice Lemons", "Thalia Smith", "Matthew Davis"],
+            },
+            {
+              type: "input",
+              name: "updatedEmployeeRole",
+              message: "What is this employee's new role?",
+              choices: ["Human Resources Director", "Marketing Manager", "Marketing Coordinator", "Production Manager", "Production Analyst", "Human Resources Assistant"],
+            },
+          ])
+          .then((answer) => {
+            updateEmployee(answer.updateEmployee, answer.updatedEmployeeRole);
+          });
         break;
       default:
         process.exit();
