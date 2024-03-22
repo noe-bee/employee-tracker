@@ -6,8 +6,10 @@ const {
   addRole,
   viewEmployees,
   addEmployee,
-  updateEmployee, 
-  retrieveDPT
+  updateEmployee,
+  retrieveDPT,
+  retrieveEMPRole,
+  retrieveEmployee,
 } = require("./db/dataManip");
 
 //questions
@@ -55,91 +57,127 @@ function init() {
           });
         break;
       case "Add a role":
-        const dptChoices = retrieveDPT();
-        // inquirer
-        //   .prompt([
-        //     {
-        //       type: "input",
-        //       name: "newRole",
-        //       message: "What new role would you like to add?",
-        //     },
-        //     {
-        //       type: "input",
-        //       name: "newRoleSalary",
-        //       message: "What is the salary for this new role?",
-        //     },
-        //     {
-        //       type: "list",
-        //       name: "newRoleDepartment",
-        //       message: "What is the department of this new role?",
-        //       choices: [{name:"Production", value: 1}, {name:"Marketing", value: 2}, {name:"Human Resources", value: 3}],
-        //     },
-        //   ])
-        //   .then((answer) => {
-        //     console.log(answer);
-            
-        //     addRole(
-        //       answer.newRole,
-        //       parseInt(answer.newRoleSalary),
-        //       parseInt(answer.newRoleDepartment)
-        //     );
-        //   });
+        retrieveDPT().then(([data]) => {
+          const dptChoices = data.map((dpt) => ({
+            name: dpt.department_name,
+            value: dpt.id,
+          }));
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "newRole",
+                message: "What new role would you like to add?",
+              },
+              {
+                type: "input",
+                name: "newRoleSalary",
+                message: "What is the salary for this new role?",
+              },
+              {
+                type: "list",
+                name: "newRoleDepartment",
+                message: "What is the department of this new role?",
+                choices: dptChoices,
+              },
+            ])
+            .then((answer) => {
+              console.log(answer);
+              addRole(
+                answer.newRole,
+                parseInt(answer.newRoleSalary),
+                parseInt(answer.newRoleDepartment)
+              );
+            });
+        });
         break;
       case "Add an employee":
-        inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "newEmployeeFN",
-              message: "What is the new employee's first name?",
-            },
-            {
-              type: "input",
-              name: "newEmployeeLN",
-              message: "What is the new employee's last name?",
-            },
-            {
-              type: "list",
-              name: "newEmployeeRole",
-              message: "What is the new employee's role?",
-              choices: ["Marketing Coordinator", "Production Analyst ", "Human Resources Assistant"],
-            },
-            {
-              type: "list",
-              name: "newEmployeeManager",
-              message: "Who is the new employee's manager?",
-              choices: ["Nancy Grimace", "Paul Brenan", "Janice Lemons"],
-            },
-          ])
-          .then((answer) => {
-            addEmployee(
-              answer.newEmployeeFN,
-              answer.newEmployeeLN,
-              answer.newEmployeeRole,
-              answer.newEmployeeManager
-            );
+        retrieveEmployee().then(([data]) => {
+          console.log(data);
+          const managerChoices = data.map((manager) => ({
+            name: manager.first_name,
+            value: manager.id,
+          }));
+          retrieveEMPRole().then(([data]) => {
+            console.log(data);
+            const roleChoices = data.map((role) => ({
+              name: role.title,
+              value: role.id,
+            }));
+            inquirer
+              .prompt([
+                {
+                  type: "input",
+                  name: "newEmployeeFN",
+                  message: "What is the new employee's first name?",
+                },
+                {
+                  type: "input",
+                  name: "newEmployeeLN",
+                  message: "What is the new employee's last name?",
+                },
+                {
+                  type: "list",
+                  name: "newEmployeeRole",
+                  message: "What is the new employee's role?",
+                  choices: roleChoices,
+                },
+                {
+                  type: "list",
+                  name: "newEmployeeManager",
+                  message: "Who is the new employee's manager?",
+                  choices: managerChoices,
+                },
+              ])
+              .then((answer) => {
+                console.log(answer);
+                addEmployee(
+                  answer.newEmployeeFN,
+                  answer.newEmployeeLN,
+                  answer.newEmployeeRole,
+                  answer.newEmployeeManager
+                );
+              });
           });
+        });
         break;
       case "Update an employee role":
-        inquirer
-          .prompt([
-            {
-              type: "list",
-              name: "updatedEmployee",
-              message: "Which employee would you like to update?",
-              choices: ["Nancy Grimace", "Alan Baker", "Paul Brenan", "Janice Lemons", "Thalia Smith", "Matthew Davis"],
-            },
-            {
-              type: "list",
-              name: "updatedEmployeeRole",
-              message: "What is this employee's new role?",
-              choices: ["Human Resources Director", "Marketing Manager", "Marketing Coordinator", "Production Manager", "Production Analyst", "Human Resources Assistant"],
-            },
-          ])
-          .then((answer) => {
-            console.log(answer)
-            updateEmployee(answer.updatedEmployee, answer.updatedEmployeeRole);
+        retrieveEmployee().then(([data]) => {
+          console.log(data);
+          const employeeChoices = data.map((emp) => ({
+            name: emp.first_name,
+            value: emp.id,
+          }));
+          retrieveEMPRole().then(([data]) => {
+            console.log(data);
+            const roleChoices = data.map((role) => ({
+              name: role.title,
+              value: role.id,
+            }));
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "updatedEmployeeRole",
+                  message: "What is this employee's new role?",
+                  choices: roleChoices,
+                },
+                {
+                  type: "list",
+                  name: "updatedEmployee",
+                  message: "Which employee would you like to update?",
+                  choices: employeeChoices,
+                },
+              ])
+              .then((answer) => {
+                console.log(answer);
+                updateEmployee(
+                  answer.updatedEmployeeRole,
+                  answer.updatedEmployee
+                );
+              });
           });
+        });
         break;
       default:
         process.exit();

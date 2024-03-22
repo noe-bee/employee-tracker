@@ -101,10 +101,10 @@ function addEmployee(
   );
 }
 
-function updateEmployee(updatedEmployee, updatedEmployeeRole) {
+function updateEmployee(updatedEmployeeRole, updatedEmployee) {
   connection.query(
-    "UPDATE employee SET role_id = ? WHERE id = ?;",
-    [updatedEmployee, updatedEmployeeRole],
+    "UPDATE employee SET role_id = ? WHERE id = ?",
+    [updatedEmployeeRole, updatedEmployee],
     (err, data) => {
       if (err) {
         return err;
@@ -123,13 +123,15 @@ function updateEmployee(updatedEmployee, updatedEmployeeRole) {
 }
 
 function retrieveDPT() {
-  connection.query("SELECT * FROM department", (err, data) => {
-    if (err) {
-      return err;
-    } else {
-      console.log(data);
-    }
-  });
+  return connection.promise().query("SELECT * FROM department")
+}
+
+function retrieveEMPRole() {
+  return connection.promise().query("SELECT * FROM role")
+}
+
+function retrieveEmployee(){
+  return connection.promise().query("SELECT * FROM employee")
 }
 
 module.exports = {
@@ -141,4 +143,6 @@ module.exports = {
   addEmployee,
   updateEmployee,
   retrieveDPT,
+  retrieveEMPRole,
+  retrieveEmployee
 };
