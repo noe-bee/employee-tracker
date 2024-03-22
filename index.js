@@ -93,13 +93,11 @@ function init() {
         break;
       case "Add an employee":
         retrieveEmployee().then(([data]) => {
-          console.log(data);
           const managerChoices = data.map((manager) => ({
             name: manager.first_name,
             value: manager.id,
           }));
           retrieveEMPRole().then(([data]) => {
-            console.log(data);
             const roleChoices = data.map((role) => ({
               name: role.title,
               value: role.id,
@@ -143,13 +141,11 @@ function init() {
         break;
       case "Update an employee role":
         retrieveEmployee().then(([data]) => {
-          console.log(data);
           const employeeChoices = data.map((emp) => ({
             name: emp.first_name,
             value: emp.id,
           }));
           retrieveEMPRole().then(([data]) => {
-            console.log(data);
             const roleChoices = data.map((role) => ({
               name: role.title,
               value: role.id,
