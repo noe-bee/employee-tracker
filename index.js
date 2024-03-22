@@ -6,7 +6,8 @@ const {
   addRole,
   viewEmployees,
   addEmployee,
-  updateEmployee,
+  updateEmployee, 
+  retrieveDPT
 } = require("./db/dataManip");
 
 //questions
@@ -54,32 +55,35 @@ function init() {
           });
         break;
       case "Add a role":
-        inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "newRole",
-              message: "What new role would you like to add?",
-            },
-            {
-              type: "input",
-              name: "newRoleSalary",
-              message: "What is the salary for this new role?",
-            },
-            {
-              type: "list",
-              name: "newRoleDepartment",
-              message: "What is the department of this new role?",
-              choices: ["Production", "Marketing", "Human Resources"],
-            },
-          ])
-          .then((answer) => {
-            addRole(
-              answer.newRole,
-              answer.newRoleSalary,
-              answer.newRoleDepartment
-            );
-          });
+        const dptChoices = retrieveDPT();
+        // inquirer
+        //   .prompt([
+        //     {
+        //       type: "input",
+        //       name: "newRole",
+        //       message: "What new role would you like to add?",
+        //     },
+        //     {
+        //       type: "input",
+        //       name: "newRoleSalary",
+        //       message: "What is the salary for this new role?",
+        //     },
+        //     {
+        //       type: "list",
+        //       name: "newRoleDepartment",
+        //       message: "What is the department of this new role?",
+        //       choices: [{name:"Production", value: 1}, {name:"Marketing", value: 2}, {name:"Human Resources", value: 3}],
+        //     },
+        //   ])
+        //   .then((answer) => {
+        //     console.log(answer);
+            
+        //     addRole(
+        //       answer.newRole,
+        //       parseInt(answer.newRoleSalary),
+        //       parseInt(answer.newRoleDepartment)
+        //     );
+        //   });
         break;
       case "Add an employee":
         inquirer
@@ -126,14 +130,15 @@ function init() {
               choices: ["Nancy Grimace", "Alan Baker", "Paul Brenan", "Janice Lemons", "Thalia Smith", "Matthew Davis"],
             },
             {
-              type: "input",
+              type: "list",
               name: "updatedEmployeeRole",
               message: "What is this employee's new role?",
               choices: ["Human Resources Director", "Marketing Manager", "Marketing Coordinator", "Production Manager", "Production Analyst", "Human Resources Assistant"],
             },
           ])
           .then((answer) => {
-            updateEmployee(answer.updateEmployee, answer.updatedEmployeeRole);
+            console.log(answer)
+            updateEmployee(answer.updatedEmployee, answer.updatedEmployeeRole);
           });
         break;
       default:

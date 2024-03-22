@@ -24,7 +24,7 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-  connection.query(";", (err, data) => {
+  connection.query("SELECT employee.id, employee.first_name AS EmployeeFN, employee.last_name AS EmployeeLN, role.title, role.salary, department.department_name, manager.first_name AS ManagerFN, manager.last_name AS ManagerLN FROM employee LEFT JOIN employee manager ON employee.manager_id = manager.id LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON department.id = role.department_id;", (err, data) => {
     if (err) {
       console.log(err);
     } else {
@@ -56,13 +56,11 @@ function addDepartment(newDepartment) {
 
 function addRole(newRole, newRoleSalary, newRoleDepartment) {
   connection.query(
-    "INSERT INTO role (title, salary, department_id) VALUES (?);",
-    newRole,
-    newRoleSalary,
-    newRoleDepartment,
+    "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);",
+    [newRole, parseInt(newRoleSalary), parseInt(newRoleDepartment)],
     (err, data) => {
       if (err) {
-        return err;
+        console.log("Error with adding role:", err);
       } else {
         console.log(`The role ${newRole} was successfully added`);
       }
@@ -84,11 +82,8 @@ function addEmployee(
   newEmployeeManager
 ) {
   connection.query(
-    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?);",
-    newEmployeeFN,
-    newEmployeeLN,
-    newEmployeeRole,
-    newEmployeeManager,
+    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
+    [newEmployeeFN, newEmployeeLN, newEmployeeRole, newEmployeeManager],
     (err, data) => {
       if (err) {
         return err;
@@ -109,13 +104,12 @@ function addEmployee(
 function updateEmployee(updatedEmployee, updatedEmployeeRole) {
   connection.query(
     "UPDATE employee SET role_id = ? WHERE id = ?;",
-    updateEmployee,
-    updatedEmployeeRole,
+    [updatedEmployee, updatedEmployeeRole],
     (err, data) => {
       if (err) {
         return err;
       } else {
-        console.log(`The updated ${updatedEmployee}'s role`);
+        console.log(`Succesfully updated ${updatedEmployee}'s role`);
       }
       connection.query("SELECT * FROM employee;", (err, data) => {
         if (err) {
@@ -128,6 +122,16 @@ function updateEmployee(updatedEmployee, updatedEmployeeRole) {
   );
 }
 
+function retrieveDPT() {
+  connection.query("SELECT * FROM department", (err, data) => {
+    if (err) {
+      return err;
+    } else {
+      console.log(data);
+    }
+  });
+}
+
 module.exports = {
   viewDepartments,
   addDepartment,
@@ -136,4 +140,5 @@ module.exports = {
   viewEmployees,
   addEmployee,
   updateEmployee,
+  retrieveDPT,
 };
